@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base app theme (used after splash) -->
+    <style name="Theme.KilaDarbar" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash screen theme -->
+    <style name="Theme.KilaDarbar.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/royal_maroon</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenIconBackgroundColor">#E8B87A</item>
+        <item name="postSplashScreenTheme">@style/Theme.KilaDarbar</item>
+    </style>
+</resources>

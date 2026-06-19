@@ -1,0 +1,59 @@
+# Kotlin compiler generated files
+.kotlin/
+
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration
+local.properties
+
+# Proguard
+proguard/
+
+# Android Studio / IntelliJ IDEA
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/navEditor.xml
+.idea/deploymentTargetDropDown.xml
+.DS_Store
+.idea/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build
+.externalNativeBuild
+.cxx/
+
+# Google Services
+google-services.json
+
+# Signing configs
+keystore.properties
+
+# Kotlin
+*.class
+
+# Virtual machine crash logs
+hs_err_pid*
