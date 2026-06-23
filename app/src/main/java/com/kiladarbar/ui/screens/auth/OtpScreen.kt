@@ -1,9 +1,10 @@
 package com.kiladarbar.ui.screens.auth
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,126 +15,212 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
+import androidx.activity.ComponentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kiladarbar.ui.components.GoldButton
+import com.kiladarbar.ui.components.GoldParticleCanvas
 import com.kiladarbar.ui.theme.*
+import kotlinx.coroutines.delay
 
 @Composable
 fun OtpScreen(
-    phone: String,
+    phone:      String,
     onVerified: () -> Unit,
-    onBack: () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel(),
+    onBack:     () -> Unit,
+    viewModel:  AuthViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    var otp by remember { mutableStateOf("") }
+    val uiState  by viewModel.uiState.collectAsState()
+    val context  = LocalContext.current
+    val activity = context as ComponentActivity
+    var otp      by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) onVerified()
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(RoyalMaroon, RoyalMaroonDark, RoyalDark)))
-    ) {
+    // Entrance animations
+    val cardY     = remember { Animatable(48f) }
+    val cardAlpha = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        cardAlpha.animateTo(1f, tween(500))
+        cardY.animateTo(0f, spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow))
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(Obsidian)) {
+        // Particles
+        GoldParticleCanvas(modifier = Modifier.fillMaxSize(), count = 35, canvasWidth = 400.dp, canvasHeight = 800.dp)
+
+        // Radial glow
+        Box(modifier = Modifier.fillMaxSize().background(Brush.radialGradient(listOf(Maroon.copy(0.35f), Color.Transparent), radius = 900f)))
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .padding(24.dp),
+            modifier            = Modifier.fillMaxSize().statusBarsPadding().padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(Modifier.height(16.dp))
+
+            // Back button
             Row(modifier = Modifier.fillMaxWidth()) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                IconButton(onClick = { viewModel.resetOtpSent(); onBack() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Ivory)
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
 
-            Text("Verify OTP", style = MaterialTheme.typography.displaySmall, color = RoyalGold, fontWeight = FontWeight.Bold)
+            // Shield icon
+            Box(
+                modifier = Modifier.size(80.dp).clip(CircleShape)
+                    .background(LuxuryGradients.goldHorizontal),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("🔒", fontSize = 36.sp)
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            Text("Verify Your Number", style = MaterialTheme.typography.headlineMedium, color = Ivory, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             Spacer(Modifier.height(8.dp))
             Text(
-                "OTP sent to $phone",
+                "We sent a 6-digit code to",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
-                textAlign = TextAlign.Center,
+                color = IvoryDim.copy(0.6f),
             )
             Text(
-                "Valid for 5 minutes",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.5f),
+                phone,
+                style      = MaterialTheme.typography.titleMedium,
+                color      = Gold,
+                fontWeight = FontWeight.Bold,
             )
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(36.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(8.dp),
+            // OTP card
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(cardAlpha.value)
+                    .offset(y = cardY.value.dp)
+                    .clip(RoundedCornerShape(28.dp))
+                    .background(Surface1)
+                    .border(1.dp, GoldBorder, RoundedCornerShape(28.dp))
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                ) {
-                    Text("Enter OTP", style = MaterialTheme.typography.titleMedium, color = RoyalMaroon, fontWeight = FontWeight.SemiBold)
+                EyebrowLabel("Enter OTP")
 
-                    OtpBoxInput(
-                        otp = otp,
-                        onOtpChange = { otp = it },
+                // 6-box OTP input
+                OtpBoxRow(
+                    otp         = otp,
+                    onOtpChange = { otp = it },
+                )
+
+                // Error
+                AnimatedVisibility(uiState.error != null) {
+                    Text(
+                        uiState.error ?: "",
+                        color     = Color(0xFFCF6679),
+                        style     = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
                     )
+                }
 
-                    if (uiState.error != null) {
+                // Verify button
+                GoldButton(
+                    text     = if (uiState.isLoading) "Verifying…" else "Verify & Login",
+                    onClick  = { viewModel.verifyPhoneCode(otp) },
+                    enabled  = otp.length == 6 && !uiState.isLoading,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                // Resend row
+                val canResend = uiState.resendSecondsLeft == 0 && !uiState.isLoading
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Text("Didn't receive it? ", style = MaterialTheme.typography.bodySmall, color = IvoryDim.copy(0.5f))
+                    if (canResend) {
                         Text(
-                            uiState.error!!,
-                            color = MaterialTheme.colorScheme.error,
+                            "Resend OTP",
+                            style     = MaterialTheme.typography.bodySmall,
+                            color     = Gold,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier  = Modifier.clickable {
+                                otp = ""
+                                viewModel.startPhoneVerification(phone, activity)
+                            },
+                        )
+                    } else {
+                        Text(
+                            "Resend in ${uiState.resendSecondsLeft}s",
                             style = MaterialTheme.typography.bodySmall,
-                            textAlign = TextAlign.Center,
+                            color = IvoryDim.copy(0.4f),
                         )
                     }
+                }
+            }
 
-                    Button(
-                        onClick = { viewModel.verifyOtp(phone, otp) },
-                        enabled = otp.length == 6 && !uiState.isLoading,
-                        modifier = Modifier.fillMaxWidth().height(52.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = RoyalMaroon),
-                    ) {
-                        if (uiState.isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
-                        } else {
-                            Text("Verify & Login", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                        }
-                    }
+            Spacer(Modifier.height(20.dp))
 
-                    // Resend
-                    val canResend = uiState.resendSecondsLeft == 0
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Didn't receive? ", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
-                        if (canResend) {
-                            TextButton(
-                                onClick = { viewModel.resendOtp(phone) },
-                                contentPadding = PaddingValues(0.dp),
-                            ) {
-                                Text("Resend OTP", color = RoyalMaroon, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall)
-                            }
-                        } else {
-                            Text(
-                                "Resend in ${uiState.resendSecondsLeft}s",
-                                color = Color.Gray,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
+            Text(
+                "⚡ Powered by Firebase Authentication",
+                style  = MaterialTheme.typography.labelSmall,
+                color  = IvoryDim.copy(0.25f),
+                fontSize = 10.sp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun OtpBoxRow(otp: String, onOtpChange: (String) -> Unit, length: Int = 6) {
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) { delay(300); focusRequester.requestFocus() }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        BasicTextField(
+            value           = otp,
+            onValueChange   = { if (it.length <= length) onOtpChange(it.filter(Char::isDigit)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+            modifier        = Modifier.fillMaxWidth().focusRequester(focusRequester).alpha(0.01f).height(1.dp),
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            repeat(length) { i ->
+                val digit     = otp.getOrNull(i)?.toString() ?: ""
+                val isCurrent = i == otp.length
+                val scale by animateFloatAsState(
+                    if (digit.isNotEmpty()) 1.08f else 1f,
+                    spring(Spring.DampingRatioMediumBouncy),
+                    label = "boxScale",
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                        .scale(scale)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (digit.isNotEmpty()) Gold.copy(0.12f) else Surface2)
+                        .border(
+                            width  = if (isCurrent) 1.5.dp else 1.dp,
+                            color  = when { isCurrent -> Gold; digit.isNotEmpty() -> Gold.copy(0.6f); else -> GoldBorder },
+                            shape  = RoundedCornerShape(12.dp),
+                        )
+                        .clickable { focusRequester.requestFocus() },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (digit.isNotEmpty()) {
+                        Text(digit, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = Gold)
+                    } else if (isCurrent) {
+                        Box(Modifier.width(2.dp).height(24.dp).background(Gold))
                     }
                 }
             }
@@ -142,74 +229,12 @@ fun OtpScreen(
 }
 
 @Composable
-private fun OtpBoxInput(
-    otp: String,
-    onOtpChange: (String) -> Unit,
-    length: Int = 6,
-) {
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) { focusRequester.requestFocus() }
-
-    Box(modifier = Modifier.fillMaxWidth()) {
-        // Hidden real input
-        BasicTextField(
-            value = otp,
-            onValueChange = { if (it.length <= length) onOtpChange(it.filter(Char::isDigit)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester)
-                .alpha(0.01f) // nearly invisible but still receives keyboard
-                .height(1.dp),
-        )
-
-        // Visual boxes
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            repeat(length) { index ->
-                val digit = otp.getOrNull(index)?.toString() ?: ""
-                val isCurrent = index == otp.length
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(56.dp)
-                        .border(
-                            width = if (isCurrent) 2.dp else 1.dp,
-                            color = when {
-                                isCurrent -> RoyalMaroon
-                                digit.isNotEmpty() -> RoyalMaroonDark
-                                else -> Color(0xFFDDDDDD)
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                        )
-                        .background(
-                            color = if (digit.isNotEmpty()) Color(0xFFFCF0F0) else Color.White,
-                            shape = RoundedCornerShape(10.dp),
-                        )
-                        .clickable { focusRequester.requestFocus() },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (digit.isNotEmpty()) {
-                        Text(
-                            text = digit,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = RoyalMaroon,
-                        )
-                    } else if (isCurrent) {
-                        // Cursor indicator
-                        Box(
-                            modifier = Modifier
-                                .width(2.dp)
-                                .height(24.dp)
-                                .background(RoyalMaroon)
-                        )
-                    }
-                }
-            }
-        }
-    }
+private fun EyebrowLabel(text: String) {
+    Text(
+        text          = text.uppercase(),
+        style         = MaterialTheme.typography.labelSmall,
+        color         = Gold,
+        fontWeight    = FontWeight.SemiBold,
+        letterSpacing = 2.sp,
+    )
 }

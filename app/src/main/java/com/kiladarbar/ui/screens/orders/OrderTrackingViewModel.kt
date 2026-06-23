@@ -14,18 +14,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class OrderTrackingUiState(
-    val orderNumber: String? = null,
-    val orderTime: String? = null,
-    val status: String? = null,
-    val estimatedMinutes: Int? = null,
-    val driverInfo: DriverInfo? = null,
-    val items: List<Any>? = null,
-    val subtotal: Double? = null,
-    val deliveryCharge: Double? = null,
-    val gst: Double? = null,
-    val discount: Double? = null,
-    val total: Double? = null,
-    val isLoading: Boolean = false,
+    val orderNumber:      String?     = null,
+    val orderTime:        String?     = null,
+    val status:           String?     = null,
+    val estimatedMinutes: Int?        = null,
+    val driverInfo:       DriverInfo? = null,
+    val items:            List<Any>?  = null,
+    val subtotal:         Double?     = null,
+    val deliveryCharge:   Double?     = null,
+    val gst:              Double?     = null,
+    val discount:         Double?     = null,
+    val total:            Double?     = null,
+    val isLoading:        Boolean     = false,
 )
 
 @HiltViewModel
@@ -46,19 +46,24 @@ class OrderTrackingViewModel @Inject constructor(
                     val dto = resp.data ?: return@onSuccess
                     _uiState.update {
                         it.copy(
-                            isLoading = false,
-                            orderNumber = dto.orderNumber,
-                            orderTime = dto.createdAt,
-                            status = dto.status,
+                            isLoading        = false,
+                            orderNumber      = dto.orderNumber,
+                            orderTime        = dto.createdAt,
+                            status           = dto.status,
                             estimatedMinutes = dto.estimatedMinutes,
-                            driverInfo = dto.driverInfo?.let { d ->
-                                DriverInfo(d.name, d.phone, d.vehicleNumber, d.rating)
+                            driverInfo       = dto.deliveryPartner?.let { d ->
+                                DriverInfo(
+                                    name          = d.name,
+                                    phone         = d.phone,
+                                    vehicleNumber = d.vehicleNumber,
+                                    rating        = d.rating.toFloat(),
+                                )
                             },
-                            subtotal = dto.subtotal,
-                            deliveryCharge = dto.deliveryCharge,
-                            gst = dto.gst,
-                            discount = dto.discount,
-                            total = dto.total,
+                            subtotal         = dto.subtotal,
+                            deliveryCharge   = dto.deliveryCharge,
+                            gst              = dto.cgstAmount + dto.sgstAmount,
+                            discount         = dto.discountAmount,
+                            total            = dto.totalAmount,
                         )
                     }
                 }
@@ -72,7 +77,9 @@ class OrderTrackingViewModel @Inject constructor(
                 delay(15_000)
                 runCatching { api.getOrder(orderId) }.onSuccess { resp ->
                     resp.data?.let { dto ->
-                        _uiState.update { it.copy(status = dto.status, estimatedMinutes = dto.estimatedMinutes) }
+                        _uiState.update {
+                            it.copy(status = dto.status, estimatedMinutes = dto.estimatedMinutes)
+                        }
                     }
                 }
             }

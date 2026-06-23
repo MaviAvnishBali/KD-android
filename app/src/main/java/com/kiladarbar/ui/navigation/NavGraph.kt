@@ -129,9 +129,14 @@ fun KilaDarbarNavGraph(
 
         composable(Screen.Cart.route) {
             CartScreen(
-                onBack              = { navController.popBackStack() },
-                onCheckout          = { navController.navigate(Screen.Checkout.route) },
-                onContinueShopping  = { navController.navigate(Screen.Menu.createRoute()) },
+                onBack             = { navController.popBackStack() },
+                onCheckout         = { navController.navigate(Screen.Checkout.route) },
+                onContinueShopping = { navController.navigate(Screen.Menu.createRoute()) },
+                onLoginRequired    = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Cart.route) { saveState = true }
+                    }
+                },
             )
         }
 
@@ -139,6 +144,7 @@ fun KilaDarbarNavGraph(
             OrdersScreen(
                 onOrderClick = { orderId -> navController.navigate(Screen.OrderTracking.createRoute(orderId)) },
                 onBack       = { navController.popBackStack() },
+                onOrderNow   = { navController.navigate(Screen.Menu.createRoute()) },
             )
         }
 
@@ -155,6 +161,11 @@ fun KilaDarbarNavGraph(
                 onBack         = { navController.popBackStack() },
                 onOrdersClick  = { navController.navigate(Screen.Orders.route) },
                 onLoyaltyClick = { navController.navigate(Screen.Loyalty.route) },
+                onLogout       = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
             )
         }
     }

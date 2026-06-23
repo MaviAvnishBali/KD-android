@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="royal_maroon">#7C1D1D</color>
-    <color name="royal_gold">#F59E0B</color>
+    <color name="obsidian">#111111</color>
+    <color name="gold">#D4AF37</color>
+    <color name="maroon">#6B0F1A</color>
+    <color name="ivory">#F8F4E9</color>
+    <color name="surface1">#1A0A0B</color>
+
+    <!-- Legacy aliases -->
+    <color name="royal_maroon">#6B0F1A</color>
+    <color name="royal_gold">#D4AF37</color>
+    <color name="royal_dark">#111111</color>
+    <color name="royal_cream">#F8F4E9</color>
 </resources>

@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base app theme (used after splash) -->
-    <style name="Theme.KilaDarbar" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Main app theme — dark, no action bar, edge-to-edge -->
+    <style name="Theme.KilaDarbar" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Force light (white) icons on the dark status bar -->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>z
+    </style>
 
     <!-- Splash screen theme -->
     <style name="Theme.KilaDarbar.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/royal_maroon</item>
+        <item name="windowSplashScreenBackground">#111111</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <item name="windowSplashScreenIconBackgroundColor">#E8B87A</item>
+        <item name="windowSplashScreenIconBackgroundColor">#D4AF37</item>
         <item name="postSplashScreenTheme">@style/Theme.KilaDarbar</item>
     </style>
+
 </resources>
