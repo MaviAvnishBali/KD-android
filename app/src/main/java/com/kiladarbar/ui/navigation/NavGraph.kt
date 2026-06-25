@@ -21,6 +21,7 @@ import com.kiladarbar.ui.screens.menu.ItemDetailScreen
 import com.kiladarbar.ui.screens.cart.CartScreen
 import com.kiladarbar.ui.screens.orders.OrdersScreen
 import com.kiladarbar.ui.screens.orders.OrderTrackingScreen
+import com.kiladarbar.ui.screens.partyhall.PartyHallScreen
 import com.kiladarbar.ui.screens.profile.ProfileScreen
 import kotlinx.coroutines.launch
 
@@ -44,6 +45,7 @@ sealed class Screen(val route: String) {
         fun createRoute(orderId: String) = "orders/$orderId/track"
     }
     object Reservations  : Screen("reservations")
+    object PartyHall     : Screen("party-hall")
     object Profile       : Screen("profile")
     object Loyalty       : Screen("loyalty")
     object Offers        : Screen("offers")
@@ -105,7 +107,12 @@ fun KilaDarbarNavGraph(
                 onCartClick     = { navController.navigate(Screen.Cart.route) },
                 onOrdersClick   = { navController.navigate(Screen.Orders.route) },
                 onProfileClick  = { navController.navigate(Screen.Profile.route) },
+                onPartyHallClick = { navController.navigate(Screen.PartyHall.route) },
             )
+        }
+
+        composable(Screen.PartyHall.route) {
+            PartyHallScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Screen.Menu.route) { backStack ->

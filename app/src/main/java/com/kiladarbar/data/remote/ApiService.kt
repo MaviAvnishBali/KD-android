@@ -155,6 +155,16 @@ interface ApiService {
     @GET(ApiEndpoints.OFFERS)
     suspend fun getOffers(): ApiResponse<List<OfferBannerDto>>
 
+    // ── Party Hall ───────────────────────────────────────────────────────────
+    @POST(ApiEndpoints.PARTY_HALL_BOOKINGS)
+    suspend fun bookPartyHall(@Body request: CreatePartyHallBookingRequest): ApiResponse<PartyHallBookingDto>
+
+    @GET(ApiEndpoints.PARTY_HALL_MINE)
+    suspend fun getMyPartyHallBookings(): ApiResponse<List<PartyHallBookingDto>>
+
+    @DELETE(ApiEndpoints.PARTY_HALL_BY_ID)
+    suspend fun cancelPartyHallBooking(@Path("id") id: String): ApiResponse<Unit>
+
     // ── Loyalty ───────────────────────────────────────────────────────────────
     @GET(ApiEndpoints.LOYALTY)
     suspend fun getLoyalty(): ApiResponse<LoyaltyDto>

@@ -53,6 +53,11 @@ object ApiEndpoints {
     const val BANNERS          = "${V1}banners"
     const val OFFERS           = "${V1}offers"
 
+    // ── Party Hall ────────────────────────────────────────────────────────────
+    const val PARTY_HALL_BOOKINGS = "${V1}party-hall/bookings"
+    const val PARTY_HALL_MINE     = "${V1}party-hall/bookings/me"
+    const val PARTY_HALL_BY_ID    = "${V1}party-hall/bookings/{id}"
+
     // ── Loyalty ───────────────────────────────────────────────────────────────
     const val LOYALTY          = "${V1}loyalty"
     const val LOYALTY_HISTORY  = "${V1}loyalty/history"

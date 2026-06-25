@@ -324,6 +324,36 @@ data class OfferBannerDto(
     @SerializedName("displayOrder")    val displayOrder:   Int,
 )
 
+// ── Party Hall ─────────────────────────────────────────────────────────────────
+
+data class CreatePartyHallBookingRequest(
+    @SerializedName("customerName")    val customerName:    String,
+    @SerializedName("customerPhone")   val customerPhone:   String,
+    @SerializedName("customerEmail")   val customerEmail:   String? = null,
+    @SerializedName("eventType")       val eventType:       String,
+    @SerializedName("guestCount")      val guestCount:      Int,
+    @SerializedName("preferredDate")   val preferredDate:   String,
+    @SerializedName("preferredTime")   val preferredTime:   String,
+    @SerializedName("packageType")     val packageType:     String,
+    @SerializedName("specialRequests") val specialRequests: String? = null,
+)
+
+data class PartyHallBookingDto(
+    @SerializedName("id")              val id:              String,
+    @SerializedName("customerName")    val customerName:    String,
+    @SerializedName("customerPhone")   val customerPhone:   String,
+    @SerializedName("customerEmail")   val customerEmail:   String?,
+    @SerializedName("eventType")       val eventType:       String,
+    @SerializedName("guestCount")      val guestCount:      Int,
+    @SerializedName("preferredDate")   val preferredDate:   String,
+    @SerializedName("preferredTime")   val preferredTime:   String,
+    @SerializedName("packageType")     val packageType:     String,
+    @SerializedName("specialRequests") val specialRequests: String?,
+    @SerializedName("status")          val status:          String,
+    @SerializedName("totalAmount")     val totalAmount:     Double?,
+    @SerializedName("createdAt")       val createdAt:       String,
+)
+
 // ── Loyalty ───────────────────────────────────────────────────────────────────
 
 data class LoyaltyDto(

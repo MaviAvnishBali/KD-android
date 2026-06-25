@@ -50,6 +50,7 @@ fun HomeScreen(
     onCartClick:     () -> Unit,
     onOrdersClick:   () -> Unit,
     onProfileClick:  () -> Unit,
+    onPartyHallClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState  by viewModel.uiState.collectAsState()
@@ -98,6 +99,9 @@ fun HomeScreen(
 
             // Quick actions
             item { QuickActionsRow(onMenuClick = onMenuClick) }
+
+            // Party Hall CTA
+            item { PartyHallCta(onClick = onPartyHallClick) }
 
             // Offers marquee — shimmer while loading
             item {
@@ -603,6 +607,57 @@ private fun QuickActionsRow(onMenuClick: () -> Unit) {
                     }
                     Text(action.label, style = MaterialTheme.typography.labelSmall, color = IvoryDim, fontWeight = FontWeight.Medium)
                 }
+            }
+        }
+    }
+}
+
+/* ── Party Hall CTA ── */
+@Composable
+private fun PartyHallCta(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .background(Brush.linearGradient(colorStops = arrayOf(0f to Color(0xFF4A148C), 0.55f to Color(0xFF2A0A4A), 1f to Color(0xFF1A0608))))
+            .border(1.dp, GoldBorder, RoundedCornerShape(22.dp))
+            .clickable { onClick() }
+            .padding(18.dp),
+    ) {
+        Box(
+            Modifier.size(160.dp).align(Alignment.CenterEnd).offset(x = 24.dp)
+                .background(Brush.radialGradient(listOf(Gold.copy(0.10f), Color.Transparent)))
+        )
+        Text("🎉", fontSize = 72.sp, modifier = Modifier.align(Alignment.CenterEnd).padding(end = 4.dp).alpha(0.3f))
+        Column(
+            modifier            = Modifier.align(Alignment.CenterStart).padding(end = 90.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            RoyalBadge("Party Hall ✦", isGold = true)
+            Text(
+                "Host Your Celebration",
+                style      = MaterialTheme.typography.titleLarge,
+                color      = Ivory,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                "Birthdays, ring ceremonies & get-togethers up to 100 guests",
+                style    = MaterialTheme.typography.bodySmall,
+                color    = IvoryDim.copy(0.75f),
+                maxLines = 2,
+            )
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(LuxuryGradients.goldHorizontal)
+                    .clickable { onClick() }
+                    .padding(horizontal = 14.dp, vertical = 8.dp),
+                verticalAlignment     = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text("Explore Packages", style = MaterialTheme.typography.labelMedium, color = Obsidian, fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp)
+                Icon(Icons.Filled.ArrowForward, null, tint = Obsidian, modifier = Modifier.size(14.dp))
             }
         }
     }
